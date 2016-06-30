@@ -23,4 +23,5 @@ dependencies {
     compile project(':domain')
     compile project(':android')
     compile project(':effects')
+    compile 'com.android.support:appcompat-v7:21.0.3'
 }

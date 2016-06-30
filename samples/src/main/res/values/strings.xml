@@ -10,7 +10,8 @@
     <string name="streaming_server_default_ip">10.125.226.116</string>
     <string name="streaming_server_default_port">1935</string>
     <string name="streaming_server_default_app">live</string>
-    <string name="streaming_server_default_stream">mp4:test</string><string name="grayscale_text">grayscale</string>
+    <string name="streaming_server_default_stream">mp4:test</string>
+    <string name="grayscale_text">grayscale</string>
 
     <!-- for cameraFilter_spinner; match with CameraCaptureActivity constants -->
     <string-array name="effects_names">
