@@ -13,12 +13,44 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.jfrog.artifactory" version "4.0.0"
+}
+
 allprojects {
     repositories {
         jcenter()
+    }
+    afterEvaluate { project ->
+        if (project.hasProperty("android")) {
+            project.android.compileOptions.incremental = true
+            project.ext.configsPath = "${project.rootDir}/misc"
+        }
     }
 }
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+Object getBuildProperty(String varName, String defaultValue = null) {
+    if (System.getenv().containsKey(varName)) {
+        return System.getenv()[varName]
+    }
+
+    def File propsFile = file(rootProject.file('local.properties'))
+    if (propsFile.exists() && propsFile.canRead()) {
+        def Properties localProps = new Properties()
+
+        localProps.load(new FileInputStream(propsFile))
+        if (localProps.containsKey(varName)) {
+            return localProps[varName];
+        }
+    }
+
+    if (rootProject.hasProperty(varName)) {
+        return rootProject.property(varName)
+    }
+
+    return defaultValue
 }

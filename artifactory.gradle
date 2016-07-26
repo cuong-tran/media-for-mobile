@@ -1,0 +1,89 @@
+if (rootProject.plugins.hasPlugin("com.jfrog.artifactory") && getBuildProperty('ARTIFACTORY_PUBLISH_USERNAME')) {
+
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'maven-publish'
+
+    //Workaround for strange init error "Cannot invoke method invoke() on null object"
+    def contextUrlTmp = getBuildProperty('ARTIFACTORY_CONTEXT_URL')
+
+    //By default we publish snapshots, if you want publish release
+    //please set env variable or gradle -P argument with PUBLISH_RELEASE=true
+    def publishRelease = getBuildProperty('PUBLISH_RELEASE', 'false').toBoolean()
+
+    def repoKeyTmp = publishRelease ?
+            getBuildProperty('ARTIFACTORY_REPO_KEY') :
+            getBuildProperty('ARTIFACTORY_SNAPSHOTS_REPO_KEY')
+
+    def usernameTmp = getBuildProperty('ARTIFACTORY_PUBLISH_USERNAME')
+    def passwordTmp = getBuildProperty('ARTIFACTORY_PUBLISH_PASSWORD')
+
+    task androidSourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.sourceFiles
+    }
+
+    publishing {
+        publications {
+            aar(MavenPublication) {
+                artifact "$project.buildDir/outputs/aar/${project.getName()}-release.aar"
+                artifact androidSourcesJar
+
+                groupId project.ext.publishingGroupId
+                version project.ext.publishingVersion + (publishRelease ? "" : "-SNAPSHOT")
+                artifactId project.getName()
+
+                //Add dependencies from android project configurations
+                //for java project you can use just `from configurations.java`
+                //But android project even more complex
+                //and maven-publish don't know nothing about android projects
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    //Iterate over the compile dependencies (we don't want the test ones),
+                    //adding a <dependency> node for each
+                    configurations.compile.allDependencies.each {
+                        if (it.group != null && it.name != null) {
+                            def dependencyNode = dependenciesNode.appendNode('dependency')
+                            dependencyNode.appendNode('groupId', it.group)
+                            dependencyNode.appendNode('artifactId', it.name)
+                            dependencyNode.appendNode('version', it.version)
+
+                            //If there are any exclusions in dependency
+                            if (it.excludeRules.size() > 0) {
+                                def exclusionsNode = dependencyNode.appendNode('exclusions')
+                                it.excludeRules.each { rule ->
+                                    def exclusionNode = exclusionsNode.appendNode('exclusion')
+                                    exclusionNode.appendNode('groupId', rule.group)
+                                    exclusionNode.appendNode('artifactId', rule.module)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = contextUrlTmp
+        publish {
+            repository {
+                repoKey = repoKeyTmp
+                username = usernameTmp
+                password = passwordTmp
+                maven = true
+            }
+        }
+    }
+
+    artifactoryPublish {
+        publications('aar')
+    }
+
+    artifactoryPublish.dependsOn('clean', 'generatePomFileForAarPublication', 'androidSourcesJar', 'assembleRelease')
+    publish.dependsOn artifactoryPublish
+    artifactoryPublish.mustRunAfter('clean')
+
+} else {
+    logger.lifecycle(":${project.name} ARTIFACTORY_PUBLISH_USERNAME is empty, skip publish plugin init")
+}

@@ -1,5 +1,9 @@
 apply plugin: 'java'
 
+project.ext.publishingGroupId = 'com.bandlab.m4m'
+project.ext.publishingVersion = '1.0.3'
+apply from: '../artifactory_java.gradle'
+
 dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'

@@ -1,0 +1,53 @@
+if (rootProject.plugins.hasPlugin("com.jfrog.artifactory") && getBuildProperty('ARTIFACTORY_PUBLISH_USERNAME')) {
+
+    apply plugin: 'com.jfrog.artifactory'
+    apply plugin: 'maven-publish'
+
+    //Workaround for strange init error "Cannot invoke method invoke() on null object"
+    def contextUrlTmp = getBuildProperty('ARTIFACTORY_CONTEXT_URL')
+
+    //By default we publish snapshots, if you want publish release
+    //please set env variable or gradle -P argument with PUBLISH_RELEASE=true
+    def publishRelease = getBuildProperty('PUBLISH_RELEASE', 'false').toBoolean()
+
+    def repoKeyTmp = publishRelease ?
+            getBuildProperty('ARTIFACTORY_REPO_KEY') :
+            getBuildProperty('ARTIFACTORY_SNAPSHOTS_REPO_KEY')
+
+    def usernameTmp = getBuildProperty('ARTIFACTORY_PUBLISH_USERNAME')
+    def passwordTmp = getBuildProperty('ARTIFACTORY_PUBLISH_PASSWORD')
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                groupId project.ext.publishingGroupId
+                version project.ext.publishingVersion + (publishRelease ? "" : "-SNAPSHOT")
+                artifactId project.getName()
+            }
+        }
+    }
+
+    artifactory {
+        contextUrl = contextUrlTmp
+        publish {
+            repository {
+                repoKey = repoKeyTmp
+                username = usernameTmp
+                password = passwordTmp
+            }
+        }
+    }
+
+    artifactoryPublish {
+        publications('mavenJava')
+    }
+
+    artifactoryPublish.dependsOn('clean', 'generatePomFileForMavenJavaPublication', 'jar')
+    publish.dependsOn artifactoryPublish
+    artifactoryPublish.mustRunAfter('clean')
+    jar.mustRunAfter clean
+
+} else {
+    logger.lifecycle(":${project.name} ARTIFACTORY_PUBLISH_USERNAME is empty, skip publish plugin init")
+}
