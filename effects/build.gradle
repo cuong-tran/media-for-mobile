@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 project.ext.publishingGroupId = 'com.bandlab.m4m'
-project.ext.publishingVersion = '1.0.3'
+project.ext.publishingVersion = '1.0.4'
 apply from: '../artifactory.gradle'
 
 android {
@@ -21,6 +21,8 @@ android {
 }
 
 dependencies {
-    compile project(':domain')
-    compile project(':android')
+    compile "com.bandlab.m4m:domain:$project.ext.publishingVersion"
+    compile "com.bandlab.m4m:android:$project.ext.publishingVersion"
+//    compile project(':domain')
+//    compile project(':android')
 }

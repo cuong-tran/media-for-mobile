@@ -1,7 +1,7 @@
 apply plugin: 'java'
 
 project.ext.publishingGroupId = 'com.bandlab.m4m'
-project.ext.publishingVersion = '1.0.3'
+project.ext.publishingVersion = '1.0.4'
 apply from: '../artifactory_java.gradle'
 
 dependencies {
