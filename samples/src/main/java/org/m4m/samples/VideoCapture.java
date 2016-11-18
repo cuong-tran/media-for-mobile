@@ -60,8 +60,14 @@ public class VideoCapture {
         capture.setTargetFile(videoPath);
         capture.setTargetVideoFormat(videoFormat);
 
-        org.m4m.AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 1);
-        capture.setTargetAudioFormat(audioFormat);
+        // would cause an error: 
+        // 11-18 11:17:02.711  7461 12908 W ErrorProcessor: com.google.android.apps.gsa.shared.speech.a.g: Error reading from input stream
+        // [
+        //
+        // org.m4m.AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 1);
+        // capture.setTargetAudioFormat(audioFormat);
+        //
+        // ]
 
         capture.start();
 
