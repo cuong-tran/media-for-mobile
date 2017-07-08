@@ -1,4 +1,5 @@
 How to Use plugin:
+
     1. Copy:
     "android.jar", "domain.jar", "capturer.jar" files into "out" folder to /Assets/Plugin/Android/;
     2. Copy:
@@ -12,7 +13,6 @@ How to create Unity plugin:
     3. Plugin files updated in "out" folder.
     
 Thanx. 
-
 
 Legal Information
 -----------------
