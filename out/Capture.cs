@@ -41,7 +41,7 @@ public class Capture : MonoBehaviour
             }
 
             // Search for our class
-			IntPtr classID = AndroidJNI.FindClass("com/sancalpa/videocaptureinde/Capturing");
+			IntPtr classID = AndroidJNI.FindClass("com/sancalpa/capturer/Capturer");
 
             // Search for it's contructor
             constructorMethodID = AndroidJNI.GetMethodID(classID, "<init>", "(Landroid/content/Context;II)V");
