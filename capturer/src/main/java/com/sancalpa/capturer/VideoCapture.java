@@ -60,7 +60,7 @@ public class VideoCapture
         capturer.setTargetFile(videoPath);
         capturer.setTargetVideoFormat(videoFormat);
 
-        AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 2);
+        AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 1);
         capturer.setTargetAudioFormat(audioFormat);
 
         capturer.start();

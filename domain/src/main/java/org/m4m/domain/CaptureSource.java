@@ -101,7 +101,9 @@ public class CaptureSource implements ICaptureSource {
     @Override
     public Frame getFrame() {
         if (isStopped) {
-            commandQueue.clear();
+
+            // Comment this line for fix corrupt MP4
+            // commandQueue.clear();
             return Frame.EOF();
         }
         return currentFrame;
