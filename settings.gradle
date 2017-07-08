@@ -1,4 +1,4 @@
-include ':domain'
+include ':domain', ':capturer'
 include ':android'
 include ':effects'
 include ':samples'
