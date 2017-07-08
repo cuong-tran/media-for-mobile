@@ -148,23 +148,7 @@ public class Capture : MonoBehaviour
         args[0].i = textureID;
         AndroidJNI.CallVoidMethod(capturingObject, captureFrameMethodID, args);
 
-        AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
-        string action = intentClass.GetStatic<string>("ACTION_MEDIA_SCANNER_SCAN_FILE");
 
-        // Intent intentObject = new Intent(action);
-        AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent", action);
-
-        // Uri uriObject = Uri.parse("file:" + filePath);
-        AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
-        AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file:" + fileFullPath);
-
-        // intentObject.setData(uriObject);
-        intentObject.Call<AndroidJavaObject>("setData", uriObject);
-
-        // this.sendBroadcast(intentObject);
-        /* AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-         AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");*/
-        playerActivityContext.Call("sendBroadcast", intentObject);
     }
 
     public void StopCapturing()
@@ -176,5 +160,24 @@ public class Capture : MonoBehaviour
 
         jvalue[] args = new jvalue[0];
         AndroidJNI.CallVoidMethod(capturingObject, stopCapturingMethodID, args);
+
+		AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
+		string action = intentClass.GetStatic<string>("ACTION_MEDIA_SCANNER_SCAN_FILE");
+
+		// Intent intentObject = new Intent(action);
+		AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent", action);
+
+		// Uri uriObject = Uri.parse("file:" + filePath);
+		AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
+		AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file:" + fileFullPath);
+
+		// intentObject.setData(uriObject);
+		intentObject.Call<AndroidJavaObject>("setData", uriObject);
+
+		// this.sendBroadcast(intentObject);
+		/* AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+         AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");*/
+		playerActivityContext.Call("sendBroadcast", intentObject);
+
     }
 }
