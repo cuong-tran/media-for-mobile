@@ -1,7 +1,7 @@
 How to Use plugin:
 
     1. Copy:
-    "android.jar", "domain.jar", "capturer.jar" files into "out" folder to /Assets/Plugin/Android/;
+    "android.jar", "domain.jar", "capturer.jar" files into libs folders to /Assets/Plugin/Android/;
     2. Copy:
     AndroidScreenCapturer.cs and CaptureManager.cs into "out" folder to /Assets/Scripts/;
     3. CaptureManager give all public methods for manage screen capturing;
