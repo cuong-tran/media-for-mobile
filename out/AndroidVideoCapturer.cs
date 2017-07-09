@@ -4,16 +4,22 @@ using System.IO;
 using System;
 
 [RequireComponent(typeof(Camera))]
-public class Capture : MonoBehaviour
+public class AndroidVideoCapturer : MonoBehaviour
 {
-    public int videoWidth = 720;
-    public int videoHeight = 1094;
-    public int videoFrameRate = 15;
-    public int videoBitRate = 3000;
+    private int videoWidth=720;
+    private int videoHeight = 1280;
+    private int videoFrameRate = 15;
+    private int videoBitRate = 3000;
+    private string albumName="ar";
+    private string fileName="capture";
+    public int VideoWidth { set { videoWidth = value; } }
+    public int VideoHeight { set { videoHeight = value; } }
+    public int VideoFrameRate { set { videoFrameRate = value; } }
+    public int VideoBitRate { set { videoBitRate = value; } }
+    public string AlbumName { set { albumName = value; } }
+    public string FileName { set { fileName = value; } }
 
     private string videoDir;
-    public string fileName = "game_capturing-";
-
     private IntPtr capturingObject = IntPtr.Zero;
     private float startTime = 0.0f;
     private float nextCaptureTime = 0.0f;
@@ -121,7 +127,6 @@ public class Capture : MonoBehaviour
     {
         if (capturingObject == IntPtr.Zero)
             return;
-
         jvalue[] videoParameters = new jvalue[4];
         videoParameters[0].i = videoWidth;
         videoParameters[1].i = videoHeight;
@@ -130,13 +135,15 @@ public class Capture : MonoBehaviour
         AndroidJNI.CallVoidMethod(capturingObject, initCapturingMethodID, videoParameters);
         DateTime date = DateTime.Now;
         string fullFileName = fileName + date.ToString("ddMMyy-hhmmss.fff") + ".mp4";
+        fileFullPath = videoDir + albumName + "/" + fullFileName;
+        Directory.CreateDirectory(videoDir + albumName);
         jvalue[] args = new jvalue[1];
-        args[0].l = AndroidJNI.NewStringUTF(videoDir + fullFileName);
+        args[0].l = AndroidJNI.NewStringUTF(fileFullPath);
         AndroidJNI.CallVoidMethod(capturingObject, startCapturingMethodID, args);
-        fileFullPath = videoDir + fullFileName;
         startTime = Time.time;
         nextCaptureTime = 0.0f;
         isRunning = true;
+        Debug.Log(fileFullPath);
     }
 
     private void CaptureFrame(int textureID)
@@ -147,7 +154,6 @@ public class Capture : MonoBehaviour
         jvalue[] args = new jvalue[1];
         args[0].i = textureID;
         AndroidJNI.CallVoidMethod(capturingObject, captureFrameMethodID, args);
-
 
     }
 
@@ -167,17 +173,14 @@ public class Capture : MonoBehaviour
 		// Intent intentObject = new Intent(action);
 		AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent", action);
 
-		// Uri uriObject = Uri.parse("file:" + filePath);
-		AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
+        // Uri uriObject = Uri.parse("file:" + fileFullPath);
+        AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri");
 		AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file:" + fileFullPath);
 
 		// intentObject.setData(uriObject);
 		intentObject.Call<AndroidJavaObject>("setData", uriObject);
 
 		// this.sendBroadcast(intentObject);
-		/* AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-         AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");*/
-		playerActivityContext.Call("sendBroadcast", intentObject);
-
+		playerActivityContext.Call("sendBroadcast", intentObject);    
     }
 }
