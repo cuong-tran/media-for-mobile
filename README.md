@@ -4,7 +4,8 @@ How to Use plugin:
     "android.jar", "domain.jar", "capturer.jar" files into build/libs/ folders to /Assets/Plugin/Android/;
     2. Copy:
     AndroidScreenCapturer.cs and CaptureManager.cs into "out" folder to /Assets/Scripts/;
-    3. CaptureManager give all public methods for manage screen capturing;
+    3. AndroidScreenCapturer attach to Camera on scene
+    4. CaptureManager give all public methods for manage screen capturing;
     
 How to create Unity plugin:
 
