@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import org.m4m.Log;
+
 public class SamplesMainActivity extends ExpandableListActivity {
     private ExpandableSamplesListAdapter samplesListAdapter;
 
@@ -35,6 +37,8 @@ public class SamplesMainActivity extends ExpandableListActivity {
         samplesListAdapter = new ExpandableSamplesListAdapter(this);
 
         setListAdapter(samplesListAdapter);
+
+        Log.log = BridgeLog.instance;
     }
 
     @Override

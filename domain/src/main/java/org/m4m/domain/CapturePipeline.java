@@ -18,6 +18,7 @@ package org.m4m.domain;
 
 import org.m4m.AudioFormat;
 import org.m4m.IProgressListener;
+import org.m4m.Log;
 import org.m4m.StreamingParameters;
 import org.m4m.VideoFormat;
 import org.m4m.domain.graphics.TextureRenderer;
@@ -48,6 +49,8 @@ public abstract class CapturePipeline {
     private final Object untillDone = new Object();
     private int orientaionDegrees = 0;
     private VideoFormat mediaFormat;
+
+    private CommandProcessor commandProcessor;
 
     /**
      * Constructor
@@ -140,7 +143,7 @@ public abstract class CapturePipeline {
      * Start data processing
      */
     public void start() {
-        CommandProcessor commandProcessor = new CommandProcessor(progressListener);
+        commandProcessor = new CommandProcessor(progressListener);
         pipeline = new Pipeline(commandProcessor);
         pools = Executors.newSingleThreadExecutor();
 
@@ -193,17 +196,20 @@ public abstract class CapturePipeline {
                     notifyOnDone();
                 } catch (Exception e) {
                     reportedError = e;
+                    Log.e("CapturePipeline", "executeProcessor: error: " + e);
                 } finally {
                     try {
                         pipeline.release();
-                        synchronized (untillDone){
+                        synchronized (untillDone) {
                             untillDone.notify();
                         }
-                        if (reportedError != null ){
+                        if (reportedError != null) {
                             notifyOnError(reportedError);
+                            Log.e("CapturePipeline", "executeProcessor: error: " + reportedError);
                         }
                     } catch (Exception e) {
                         notifyOnError(e);
+                        Log.e("CapturePipeline", "executeProcessor: error: " + e);
                     }
                 }
             }
@@ -225,24 +231,43 @@ public abstract class CapturePipeline {
 
             notifyOnStop();
 
-            synchronized (untillDone){
-                untillDone.wait(10 * 1000);
+            if (commandProcessor != null) {
+                commandProcessor.stop();
+            }
+
+            synchronized (untillDone) {
+                untillDone.wait(1 * 1000);
             }
 
             //stopRequested = true;
-            pools.shutdownNow();
-            if (!pools.awaitTermination(10, TimeUnit.SECONDS)) {
-                notifyOnError(new Exception("Cannot stop capture thread"));
+            //pools.shutdownNow();
+            pools.shutdown();
+            try {
+                if (!pools.awaitTermination(1, TimeUnit.SECONDS)) {
+                    notifyOnError(new Exception("Cannot stop capture thread"));
+                    Log.e("CapturePipeline", "stop: error: Cannot stop capture thread");
+                    pools.shutdownNow();
+                    if (!pools.awaitTermination(1, TimeUnit.SECONDS)) {
+                        Log.e("CapturePipeline", "stop: error: Cannot stop capture thread after calling shutdownNow");
+                    }
+                }
+            } catch (InterruptedException ie) {
+                pools.shutdownNow();
+                Thread.currentThread().interrupt();
+                Log.e("CapturePipeline", "stop: error: " + ie + " " + ie.getMessage());
             }
-
         } catch (Exception e) {
             notifyOnError(e);
+            Log.e("CapturePipeline", "stop: error: " + e + " " + e.getMessage());
         }
+
         //destroy everithing
         audioEncoder = null;
         videoEncoder = null;
 
         started = false;
+
+        commandProcessor = null;
     }
 
     public void setFillMode(TextureRenderer.FillMode fillMode) {

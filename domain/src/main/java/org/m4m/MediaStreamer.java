@@ -112,6 +112,7 @@ public class MediaStreamer implements Serializable {
             public void run() {
 
                 try {
+                    Log.e("MediaStreamer","startCommandsProcessingAsync");
                     pipeline.resolve();
 
                     progressListener.onMediaStart();
@@ -154,6 +155,7 @@ public class MediaStreamer implements Serializable {
      * Stops processing
      */
     public void stop() {
+        Log.e("MediaStreamer","startCommandsProcessingAsync");
         if (commandProcessor != null) {
             commandProcessor.stop();
         }

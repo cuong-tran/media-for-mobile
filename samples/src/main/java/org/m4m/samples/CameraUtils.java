@@ -16,9 +16,51 @@
 
 package org.m4m.samples;
 
-import android.hardware.Camera;
+import org.m4m.ILog;
 
+import android.content.Context;
+import android.hardware.Camera;
+import android.os.Environment;
+import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+class BridgeLog implements ILog
+{
+    public static final BridgeLog instance = new BridgeLog();
+
+    @Override
+    public void e(String tag, String message) {
+        Log.e(tag, message);
+    }
+}
+
+class Utils
+{
+    private static File getAndroidMoviesFolder(Context c) {
+        // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator;
+        // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        return c.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+    }
+
+    public static String getVideoFilePath(Context c, String filename) {
+        // return getAndroidMoviesFolder().getAbsolutePath() + "/capture.mp4";
+        File file = new File(Utils.getAndroidMoviesFolder(c), filename);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file.getAbsolutePath();
+    }
+
+    public static String className(Object object)
+    {
+        return object.getClass().getSimpleName();
+    }
+}
 
 class CameraUtils {
     private Camera.Parameters cameraParams;

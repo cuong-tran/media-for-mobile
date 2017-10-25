@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -66,8 +67,8 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
     private Timer timer;
     private long startTime;
 
-    protected String videoPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator;
-    protected String lastFileName;
+    protected String videoFilePath;
+    protected final String videoFileName = "game_capturing.mp4";
 
     final Handler uiHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -118,7 +119,10 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e(Utils.className(this), "onCreate: ");
         super.onCreate(savedInstanceState);
+
+        videoFilePath = Utils.getVideoFilePath(this, videoFileName);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -209,11 +213,12 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
     }
 
     protected void startCapturing() throws IOException {
-        lastFileName = "game_capturing.mp4";
-        gameRenderer.startCapturing(videoPath + lastFileName);
+        Log.e(Utils.className(this), "startCapturing: "+videoFilePath);
+        gameRenderer.startCapturing(videoFilePath);
     }
 
     protected void stopCapturing() {
+        Log.e(Utils.className(this), "stopCapturing: ");
         gameRenderer.stopCapturing();
     }
 
@@ -249,7 +254,7 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
     public void updateVideoPreview() {
         Bitmap thumb;
 
-        thumb = ThumbnailUtils.createVideoThumbnail(videoPath + lastFileName, MediaStore.Video.Thumbnails.MINI_KIND);
+        thumb = ThumbnailUtils.createVideoThumbnail(videoFilePath, MediaStore.Video.Thumbnails.MINI_KIND);
 
         ImageButton preview = (ImageButton)findViewById(R.id.preview);
 
@@ -262,7 +267,7 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
     }
 
     protected void playVideo() {
-        String videoUrl = "file:///" + videoPath + lastFileName;
+        String videoUrl = "file:///" + videoFilePath;
 
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 

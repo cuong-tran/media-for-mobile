@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class CameraCapturerActivity extends ActivityWithTimeline implements CameraCaptureSettingsPopup.CameraCaptureSettings {
+
+    private final String videoFileName = "capture.mp4";
 
     public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
         @Override
@@ -81,8 +84,8 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
                     @Override
                     public void run() {
                         isRecordingInProgress = false;
-                        showToast("Video saved to " + getVideoFilePath());
-                        updateVideoFilePreview();
+                        String filepath = updateVideoFilePreview();
+                        showToast("Video saved to " + filepath);
                         captureButton.setEnabled(true);
                     }
                 });
@@ -329,6 +332,8 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
     }
 
     public void onCreate(Bundle icicle) {
+        Log.e(Utils.className(this), "onCreate: ");
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         super.onCreate(icicle);
@@ -422,6 +427,7 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
 
     @Override
     protected void onResume() {
+        Log.e(this.getClass().toString(), "onResume: ");
         super.onResume();
 
         if (camera == null) {
@@ -610,7 +616,7 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
     private void capture() {
 
         try {
-            capture.setTargetFile(getVideoFilePath());
+            capture.setTargetFile(Utils.getVideoFilePath(this, videoFileName));
         } catch (IOException e) {
             String message = (e.getMessage() != null) ? e.getMessage() : e.toString();
 
@@ -645,14 +651,6 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
         }
     }
 
-    private File getAndroidMoviesFolder() {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-    }
-
-    public String getVideoFilePath() {
-        return getAndroidMoviesFolder().getAbsolutePath() + "/capture.mp4";
-    }
-
     public void onClickEffect(View view) {
         if (isRecordingInProgress) {
             return;
@@ -671,19 +669,21 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
         }
     }
 
-    public void updateVideoFilePreview() {
-        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(getVideoFilePath(), MediaStore.Video.Thumbnails.MINI_KIND);
-
+    public String updateVideoFilePreview() {
+        String filepath = Utils.getVideoFilePath(this, videoFileName);
+        Log.e(Utils.className(this), "updateVideoFilePreview: filepath=" + filepath);
+        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filepath, MediaStore.Video.Thumbnails.MINI_KIND);
+        Log.e(Utils.className(this), "updateVideoFilePreview: thumb=" + thumb);
         if (thumb == null) {
             videoFilePreview.setVisibility(View.INVISIBLE);
         } else {
-
             videoFilePreview.setImageBitmap(thumb);
         }
+        return filepath;
     }
 
     protected void playVideo() {
-        String videoFilePath = getVideoFilePath();
+        String videoFilePath = Utils.getVideoFilePath(this, videoFileName);
         String videoUrl = "file:///" + videoFilePath;
 
         if (new File(videoFilePath).exists()) {

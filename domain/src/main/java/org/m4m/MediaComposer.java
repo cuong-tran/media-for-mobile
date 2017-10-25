@@ -343,6 +343,10 @@ public class MediaComposer implements Serializable {
      * Stops processing.
      */
     public void stop() {
+        Log.e("MediaComposer","stop");
+        if (commandProcessor != null) {
+            commandProcessor.stop();
+        }
         if (pipeline != null) {
             pipeline.stop();
         }
@@ -378,6 +382,7 @@ public class MediaComposer implements Serializable {
             @Override
             public void run() {
                 try {
+                    Log.e("MediaComposer","startCommandsProcessingAsync");
                     pipeline.resolve();
                     notifyOnMediaStart();
                     notifyOnMediaProgress(0);
