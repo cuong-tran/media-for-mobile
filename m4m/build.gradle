@@ -1,11 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
 
     defaultConfig {
-        applicationId "org.m4m.samples"
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
@@ -20,7 +19,20 @@ android {
 }
 
 dependencies {
-    compile project(':domain')
+    provided files('libs/classes.jar')
     compile project(':android')
+    compile project(':domain')
     compile project(':effects')
 }
+
+task exportJar(type: Copy) {
+    from('build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'm4m.jar')
+}
+
+task deleteOldJar(type: Delete) {
+    delete 'release/m4m.jar'
+}
+
+exportJar.dependsOn(deleteOldJar, build)

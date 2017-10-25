@@ -1,4 +1,4 @@
-include ':domain'
+include ':domain', ':m4m'
 include ':android'
 include ':effects'
 include ':samples'
