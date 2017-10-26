@@ -26,6 +26,7 @@ import android.util.Log;
 
 import org.m4m.IProgressListener;
 import org.m4m.StreamingParameters;
+import org.m4m.android.Utils;
 import org.m4m.android.graphics.EglUtil;
 import org.m4m.android.graphics.FrameBuffer;
 import org.m4m.android.graphics.FullFrameTexture;

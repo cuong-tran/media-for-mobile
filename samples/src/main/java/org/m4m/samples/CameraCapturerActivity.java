@@ -35,6 +35,7 @@ import android.widget.*;
 
 import org.m4m.android.AndroidMediaObjectFactory;
 import org.m4m.android.AudioFormatAndroid;
+import org.m4m.android.Utils;
 import org.m4m.android.VideoFormatAndroid;
 import org.m4m.android.graphics.VideoEffect;
 import org.m4m.domain.FileSegment;

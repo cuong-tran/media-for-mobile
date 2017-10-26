@@ -24,6 +24,7 @@ import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import org.m4m.Log;
+import org.m4m.android.BridgeLog;
 
 public class SamplesMainActivity extends ExpandableListActivity {
     private ExpandableSamplesListAdapter samplesListAdapter;

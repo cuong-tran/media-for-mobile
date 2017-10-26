@@ -38,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.m4m.IProgressListener;
 
+import org.m4m.android.Utils;
 import org.m4m.samples.controls.GameCaptureSettingsPopup;
 import org.m4m.samples.controls.GameGLSurfaceView;
 

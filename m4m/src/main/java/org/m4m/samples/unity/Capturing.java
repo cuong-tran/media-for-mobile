@@ -1,6 +1,7 @@
 package org.m4m.samples.unity;
 
 import org.m4m.IProgressListener;
+import org.m4m.android.Utils;
 import org.m4m.domain.Resolution;
 import org.m4m.android.graphics.FullFrameTexture;
 
@@ -35,6 +36,8 @@ public class Capturing
     private EncodeThread encodeThread = null;
     private boolean finalizeFrame = false;
     private boolean isRunning = false;
+
+    private static Context context;
 
     private IProgressListener progressListener = new IProgressListener() {
         @Override
@@ -115,6 +118,8 @@ public class Capturing
     {
         videoCapture = new VideoCapture(context, progressListener);
 
+        Capturing.context = context;
+
         this.width = width;
         this.height = height;
 
@@ -131,6 +136,16 @@ public class Capturing
     public static String getDirectoryDCIM()
     {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator;
+    }
+
+    public static String getFileSeparator()
+    {
+        return File.separator;
+    }
+
+    public static String getAndroidMoviesFolderPath()
+    {
+        return context != null ? Utils.getAndroidMoviesFolderPath(context) : getDirectoryDCIM();
     }
 
     public void initCapturing(int width, int height, int frameRate, int bitRate)
