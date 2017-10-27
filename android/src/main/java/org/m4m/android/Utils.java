@@ -15,25 +15,8 @@ import java.io.IOException;
 
 public class Utils
 {
-    private static File getAndroidMoviesFolder(Context c) {
-        // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator;
-        // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-        return c.getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-    }
-
-    public static String getAndroidMoviesFolderPath(Context c) {
-        File file = getAndroidMoviesFolder(c);
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return file.getAbsolutePath();
-    }
-
     public static String getVideoFilePath(Context c, String filename) {
-        // return getAndroidMoviesFolder().getAbsolutePath() + "/capture.mp4";
-        File file = new File(Utils.getAndroidMoviesFolder(c), filename);
+        File file = new File(c.getExternalFilesDir(Environment.DIRECTORY_MOVIES), filename);
         try {
             file.createNewFile();
         } catch (IOException e) {

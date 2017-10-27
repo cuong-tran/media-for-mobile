@@ -51,7 +51,7 @@ public class VideoCapture
         videoFormat.setVideoIFrameInterval(IFrameInterval);
     }
 
-    public void start(String videoPath) throws IOException
+    public void start(String videoPath, boolean captureAudio) throws IOException
     {
         if (isStarted())
             throw new IllegalStateException(TAG + " already started!");
@@ -60,9 +60,11 @@ public class VideoCapture
         capturer.setTargetFile(videoPath);
         capturer.setTargetVideoFormat(videoFormat);
 
-        AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 2);
-        capturer.setTargetAudioFormat(audioFormat);
-
+        if (captureAudio)
+        {
+            AudioFormat audioFormat = new AudioFormatAndroid("audio/mp4a-latm", 44100, 2);
+            capturer.setTargetAudioFormat(audioFormat);
+        }
         capturer.start();
 
         isStarted = true;

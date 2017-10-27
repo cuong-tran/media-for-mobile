@@ -72,6 +72,7 @@ public class ShaderProgram implements IShaderProgram {
     }
 
     private int loadShader(int type, String shaderCode) {
+        eglUtil.checkEglError("ShaderProgram.loadShader: before creating first shader");
         int shader = GLES20.glCreateShader(type);
         eglUtil.checkEglError("glCreateShader");
 

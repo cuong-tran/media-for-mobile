@@ -21,3 +21,36 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+task copyJarDomain(type: Copy) {
+    from('domain/build/libs/domain.jar')
+    into('release/')
+}
+
+task copyJarAndroid(type: Copy) {
+    from('android/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'android.jar')
+}
+
+task copyJarEffects(type: Copy) {
+    from('effects/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'effects.jar')
+}
+
+task copyJarM4M(type: Copy) {
+    from('m4m/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'm4m.jar')
+}
+
+task deleteOldJars(type: Delete) << {
+    delete 'release/m4m.jar'
+    delete 'release/domain.jar'
+    delete 'release/effects.jar'
+    delete 'android/effects.jar'
+}
+
+task exportJars() {}
+exportJars.dependsOn(deleteOldJars, copyJarDomain, copyJarAndroid, copyJarEffects, copyJarM4M)

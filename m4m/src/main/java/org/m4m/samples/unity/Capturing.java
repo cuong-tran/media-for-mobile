@@ -37,7 +37,7 @@ public class Capturing
     private boolean finalizeFrame = false;
     private boolean isRunning = false;
 
-    private static Context context;
+    private Context context;
 
     private IProgressListener progressListener = new IProgressListener() {
         @Override
@@ -114,11 +114,15 @@ public class Capturing
         }
     }
 
-    public Capturing(Context context, int width, int height)
+    public void initWithContextAndSize(Context context, int width, int height)
     {
+        checkEglError("Capturing.initWithContextAndSize");
+        if (context == null || width <= 0 || height <= 0)
+            return;
+
         videoCapture = new VideoCapture(context, progressListener);
 
-        Capturing.context = context;
+        this.context = context;
 
         this.width = width;
         this.height = height;
@@ -128,9 +132,23 @@ public class Capturing
         instance = this;
     }
 
+    public Capturing(Context context, int width, int height)
+    {
+        initWithContextAndSize(context, width, height);
+    }
+
     public static Capturing getInstance()
     {
+        if (instance == null)
+            instance = new Capturing(null, 0, 0);
         return instance;
+    }
+
+    public void checkEglError(String operation) {
+        int error;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            throw new RuntimeException(operation + ": glError " + error);
+        }
     }
 
     public static String getDirectoryDCIM()
@@ -143,9 +161,16 @@ public class Capturing
         return File.separator;
     }
 
-    public static String getAndroidMoviesFolderPath()
+    public String getVideoFilePath(String fileName)
     {
-        return context != null ? Utils.getAndroidMoviesFolderPath(context) : getDirectoryDCIM();
+        Log.e(TAG, "getVideoFilePath: context=" + context);
+        if (context != null) {
+            String filePath = Utils.getVideoFilePath(context, fileName);
+            Log.e(TAG, "getVideoFilePath: context=" + context);
+            return filePath;
+        } else {
+            return getDirectoryDCIM() + fileName;
+        }
     }
 
     public void initCapturing(int width, int height, int frameRate, int bitRate)
@@ -159,7 +184,7 @@ public class Capturing
         encodeThread = new EncodeThread(sharedContext);
     }
 
-    public void startCapturing(final String videoPath)
+    public void startCapturing(final String videoPath, final boolean captureAudio)
     {
         if (videoCapture == null) {
             return;
@@ -170,9 +195,10 @@ public class Capturing
                 Log.d(TAG, "--- startCapturing");
                 synchronized (videoCapture) {
                     try {
-                        videoCapture.start(videoPath);
+                        videoCapture.start(videoPath, captureAudio);
                     } catch (IOException e) {
                         Log.e(TAG, "--- startCapturing error");
+                        e.printStackTrace();
                     }
                 }
             }
