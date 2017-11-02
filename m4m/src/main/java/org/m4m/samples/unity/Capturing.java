@@ -2,7 +2,6 @@ package org.m4m.samples.unity;
 
 import org.m4m.IProgressListener;
 import org.m4m.android.Utils;
-import org.m4m.domain.Resolution;
 import org.m4m.android.graphics.FullFrameTexture;
 
 import android.opengl.GLES20;
@@ -10,11 +9,17 @@ import android.os.Environment;
 import android.util.Log;
 import android.content.Context;
 
+import com.unity3d.player.UnityPlayer;
+
 import java.io.IOException;
 import java.io.File;
 
 public class Capturing
 {
+    private static String unityGameObjectName = "AndroidVideoCapture";
+    private static final String unitySuccessCallbackName = "OnVideoRecordingSuccess";
+    private static final String unityErrorCallbackName = "OnVideoRecordingError";
+
     private static final String TAG = "Capturing";
 
     private static FullFrameTexture texture;
@@ -38,6 +43,23 @@ public class Capturing
     private boolean isRunning = false;
 
     private Context context;
+
+    /**
+     * this method is called in Unity
+     * @param name
+     */
+    public static void setUnityObjectName(String name) {
+        unityGameObjectName = name;
+    }
+
+    /**
+     * Send message to Unity's GameObject (named as Plugin.unityGameObjectName)
+     * @param method name of the method in GameObject's script
+     * @param message the actual message
+     */
+    private static void sendMessageToUnityObject(String method, String message){
+        UnityPlayer.UnitySendMessage(unityGameObjectName, method, message);
+    }
 
     private IProgressListener progressListener = new IProgressListener() {
         @Override
@@ -100,7 +122,12 @@ public class Capturing
             }
             isStopped = false;
             synchronized (videoCapture) {
-                videoCapture.stop();
+                String[] message = new String[1];
+                boolean success = videoCapture.stop(message);
+                if (success)
+                    sendMessageToUnityObject(unitySuccessCallbackName, message[0]);
+                else
+                    sendMessageToUnityObject(unityErrorCallbackName, message[0]);
             }
         }
 
@@ -161,15 +188,13 @@ public class Capturing
         return File.separator;
     }
 
-    public String getVideoFilePath(String fileName)
+    public String getAppDataVideoFilePath(String fileName)
     {
-        Log.e(TAG, "getVideoFilePath: context=" + context);
+        Log.e(TAG, "getAppDataVideoFilePath: context=" + context);
         if (context != null) {
-            String filePath = Utils.getVideoFilePath(context, fileName);
-            Log.e(TAG, "getVideoFilePath: context=" + context);
-            return filePath;
+            return Utils.getAppDataVideoFilePath(context, fileName);
         } else {
-            return getDirectoryDCIM() + fileName;
+            return Utils.getExternalStorageVideoFilePath(fileName);
         }
     }
 

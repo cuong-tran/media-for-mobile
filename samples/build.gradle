@@ -23,4 +23,5 @@ dependencies {
     compile project(':domain')
     compile project(':android')
     compile project(':effects')
+    compile project(':m4m')
 }

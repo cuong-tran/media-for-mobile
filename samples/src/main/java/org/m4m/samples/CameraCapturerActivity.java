@@ -25,7 +25,6 @@ import android.hardware.Camera;
 import android.media.ThumbnailUtils;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -617,7 +616,7 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
     private void capture() {
 
         try {
-            capture.setTargetFile(Utils.getVideoFilePath(this, videoFileName));
+            capture.setTargetFile(Utils.getAppDataVideoFilePath(this, videoFileName));
         } catch (IOException e) {
             String message = (e.getMessage() != null) ? e.getMessage() : e.toString();
 
@@ -671,7 +670,7 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
     }
 
     public String updateVideoFilePreview() {
-        String filepath = Utils.getVideoFilePath(this, videoFileName);
+        String filepath = Utils.getAppDataVideoFilePath(this, videoFileName);
         Log.e(Utils.className(this), "updateVideoFilePreview: filepath=" + filepath);
         Bitmap thumb = ThumbnailUtils.createVideoThumbnail(filepath, MediaStore.Video.Thumbnails.MINI_KIND);
         Log.e(Utils.className(this), "updateVideoFilePreview: thumb=" + thumb);
@@ -684,7 +683,7 @@ public class CameraCapturerActivity extends ActivityWithTimeline implements Came
     }
 
     protected void playVideo() {
-        String videoFilePath = Utils.getVideoFilePath(this, videoFileName);
+        String videoFilePath = Utils.getAppDataVideoFilePath(this, videoFileName);
         String videoUrl = "file:///" + videoFilePath;
 
         if (new File(videoFilePath).exists()) {

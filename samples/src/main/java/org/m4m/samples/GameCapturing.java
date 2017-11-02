@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -42,7 +41,6 @@ import org.m4m.android.Utils;
 import org.m4m.samples.controls.GameCaptureSettingsPopup;
 import org.m4m.samples.controls.GameGLSurfaceView;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -123,7 +121,7 @@ public class GameCapturing extends Activity implements GameCaptureSettingsPopup.
         Log.e(Utils.className(this), "onCreate: ");
         super.onCreate(savedInstanceState);
 
-        videoFilePath = Utils.getVideoFilePath(this, videoFileName);
+        videoFilePath = Utils.getAppDataVideoFilePath(this, videoFileName);
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);

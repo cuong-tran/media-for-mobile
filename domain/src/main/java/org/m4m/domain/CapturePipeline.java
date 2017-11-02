@@ -236,18 +236,18 @@ public abstract class CapturePipeline {
             }
 
             synchronized (untillDone) {
-                untillDone.wait(1 * 1000);
+                untillDone.wait(100);
             }
 
             //stopRequested = true;
             //pools.shutdownNow();
             pools.shutdown();
             try {
-                if (!pools.awaitTermination(1, TimeUnit.SECONDS)) {
+                if (!pools.awaitTermination(100, TimeUnit.MILLISECONDS)) {
                     notifyOnError(new Exception("Cannot stop capture thread"));
                     Log.e("CapturePipeline", "stop: error: Cannot stop capture thread");
                     pools.shutdownNow();
-                    if (!pools.awaitTermination(1, TimeUnit.SECONDS)) {
+                    if (!pools.awaitTermination(100, TimeUnit.MILLISECONDS)) {
                         Log.e("CapturePipeline", "stop: error: Cannot stop capture thread after calling shutdownNow");
                     }
                 }

@@ -26,7 +26,7 @@
             android:largeHeap="true">
 
         <activity
-                android:name="org.m4m.samples.SamplesMainActivity"
+                android:name="jp.classmethod.sample.mp4parser.MainActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

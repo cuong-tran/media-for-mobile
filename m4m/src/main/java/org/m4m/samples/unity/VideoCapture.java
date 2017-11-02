@@ -72,20 +72,30 @@ public class VideoCapture
         framesCaptured = 0;
     }
 
-    public void stop()
+    public boolean stop(String[] message)
     {
         if (!isStarted())
-            throw new IllegalStateException(TAG + " not started or already stopped!");
-
+        {
+            message[0] = TAG + " not started or already stopped!";
+            //throw new IllegalStateException(message[0]);
+            Log.e(TAG, message[0]);
+            return false;
+        }
+        boolean success = false;
         try {
             capturer.stop();
             isStarted = false;
+            message[0] = TAG + " GLCapture finished with success";
+            success = true;
         } catch (Exception ex) {
-            Log.e(TAG, "--- Exception: GLCapture can't stop");
+            message[0] = TAG + ex.getMessage() + "--- Exception: GLCapture can't stop";
+            Log.e(TAG, message[0]);
+            success = false;
         }
 
         capturer = null;
         isConfigured = false;
+        return success;
     }
 
     private void configure()
