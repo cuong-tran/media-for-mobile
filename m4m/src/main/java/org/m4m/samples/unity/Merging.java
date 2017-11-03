@@ -121,28 +121,28 @@ public class Merging {
         }
     }
 
-    public void mergeAudioWithVideoInBackgroundThread(final String videoFilePath, final String audioFilePath, final String outputFileName)
+    public void mergeAudioWithVideoInBackgroundThread(final String videoFilePath, final String audioFilePath, final String outputFilePath)
     {
         Thread thread = new Thread(new Runnable() {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
             public void run() {
                 android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
-                mergeAudioWithVideo(videoFilePath, audioFilePath, outputFileName);
+                mergeAudioWithVideo(videoFilePath, audioFilePath, outputFilePath);
                 // Notify UI thread... <- already notified
             }
         });
         thread.start();
     }
 
-    public boolean mergeAudioWithVideo(String videoFilePath, String audioFilePath, String outputFileName) {
+    public boolean mergeAudioWithVideo(String videoFilePath, String audioFilePath, String outputFilePath) {
         if (context == null)
         {
             sendMessageToUnityObject(unityErrorCallbackName, "context is null");
             return false;
         }
 
-        String outputFilePath = Utils.getExternalStorageVideoFilePath(outputFileName);
+        //String outputFilePath = Utils.getExternalStorageVideoFilePath(outputFileName);
         //String videoFilePath = Utils.getAppDataFilePath(context, videoFileName);
         //String audioFilePath = Utils.getAppDataFilePath(context, audioFileName);
 
