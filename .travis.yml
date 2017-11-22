@@ -18,7 +18,9 @@ cache:
         - $HOME/.gradle/caches/
         - $HOME/.gradle/wrapper/
 
-script: ./gradlew test
+script:
+  - ./gradlew assembleDebug
+  - ./gradlew assembleRelease
 
 notifications:
   slack: saicheng-team:8X56hkcIDcoanC5B2sNxPHdZ
