@@ -20,6 +20,8 @@ import android.opengl.EGL14;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.util.Log;
+
 import org.m4m.domain.Resolution;
 import org.m4m.domain.graphics.IEglUtil;
 import org.m4m.domain.graphics.Program;
@@ -226,7 +228,8 @@ public class EglUtil implements IEglUtil {
     public void checkEglError(String operation) {
         int error;
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            throw new RuntimeException(operation + ": glError " + error);
+            Log.e("EglUtil", "checkEglError: " + operation + ": glError " + error);
+            //throw new RuntimeException(operation + ": glError " + error);
         }
     }
 

@@ -25,8 +25,6 @@ public class Capturing
     private static FullFrameTexture texture;
 
     private VideoCapture videoCapture;
-    private int width = 0;
-    private int height = 0;
 
     private int videoWidth = 0;
     private int videoHeight = 0;
@@ -141,40 +139,34 @@ public class Capturing
         }
     }
 
-    public void initWithContextAndSize(Context context, int width, int height)
+    public void initWithContext(Context context)
     {
         checkEglError("Capturing.initWithContextAndSize");
-        if (context == null || width <= 0 || height <= 0)
-            return;
-
         videoCapture = new VideoCapture(context, progressListener);
 
         this.context = context;
-
-        this.width = width;
-        this.height = height;
-
         texture = new FullFrameTexture();
         sharedContext = new SharedContext();
         instance = this;
     }
 
-    public Capturing(Context context, int width, int height)
+    public Capturing(Context context)
     {
-        initWithContextAndSize(context, width, height);
+        initWithContext(context);
     }
 
     public static Capturing getInstance()
     {
         if (instance == null)
-            instance = new Capturing(null, 0, 0);
+            instance = new Capturing(null);
         return instance;
     }
 
     public void checkEglError(String operation) {
         int error;
         while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
-            throw new RuntimeException(operation + ": glError " + error);
+            Log.e(TAG, "checkEglError: " + operation + ": glError " + error);
+            //throw new RuntimeException(operation + ": glError " + error);
         }
     }
 
