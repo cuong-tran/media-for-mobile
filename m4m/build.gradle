@@ -23,6 +23,8 @@ dependencies {
     compile project(':android')
     compile project(':domain')
     compile project(':effects')
+    compile files('libs/aspectjrt-1.7.3.jar')
+    compile files('libs/isoparser-1.0.2.jar')
 }
 
 task exportJar(type: Copy) {

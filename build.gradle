@@ -33,12 +33,12 @@ task copyJarDomain(type: Copy) {
 //}
 
 task copyJarAspectjrt(type: Copy) {
-    from('android/libs/aspectjrt-1.7.3.jar')
+    from('m4m/libs/aspectjrt-1.7.3.jar')
     into('release/')
 }
 
 task copyJarIsoParser(type: Copy) {
-    from('android/libs/isoparser-1.0.2.jar')
+    from('m4m/libs/isoparser-1.0.2.jar')
     into('release/')
 }
 
