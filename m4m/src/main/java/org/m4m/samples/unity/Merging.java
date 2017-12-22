@@ -121,9 +121,9 @@ public class Merging {
         }
     }
 
-    public String mergeAudioWithVideoInBackgroundThread(final String videoFilePath, final String audioFilePath, final String outputFileName)
+    public String mergeAudioWithVideoInBackgroundThread(final String videoFilePath, final String audioFilePath, final String outputFilePath)
     {
-        final String outputFilePath = Utils.getExternalStorageVideoFilePath(outputFileName);
+        //final String outputFilePath = Utils.getExternalStorageVideoFilePath(outputFileName);
         Thread thread = new Thread(new Runnable() {
             @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
             @Override
