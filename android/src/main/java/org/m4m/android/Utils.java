@@ -1,8 +1,11 @@
 package org.m4m.android;
 
 import android.content.Context;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +16,20 @@ import java.io.IOException;
 
 public class Utils
 {
+    public static void scanMediaFilePath(Context context, String filePath)
+    {
+        //sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+        //sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES))));
+        //File dirToScan = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
+        String[] toBeScannedStr = new String[]{filePath/*dirToScan.getAbsolutePath(), dirToScan.getPath()*/};
+        MediaScannerConnection.scanFile(context, toBeScannedStr, null, new MediaScannerConnection.OnScanCompletedListener() {
+            @Override
+            public void onScanCompleted(String path, Uri uri) {
+                Log.d("scanMediaFilePath", "MEDIA SCAN COMPLETED: " + path);
+            }
+        });
+    }
+
     public static String getExternalStorageDCIMDirFilePath(String filename) {
         File dirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         return getFilePath(dirPath, filename);

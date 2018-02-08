@@ -18,14 +18,11 @@ import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder;
 import com.unity3d.player.UnityPlayer;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.MediaCodec;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
@@ -209,16 +206,7 @@ public class Merging {
             Log.e("MP4Parser", "mergeAudioWithVideo: End of audio/video merge");
             if (context != null)
             {
-                //sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
-                //sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES))));
-                //File dirToScan = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES);
-                String[] toBeScannedStr = new String[]{outputFilePath/*dirToScan.getAbsolutePath(), dirToScan.getPath()*/};
-                MediaScannerConnection.scanFile(context, toBeScannedStr, null, new MediaScannerConnection.OnScanCompletedListener() {
-                    @Override
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.e("MP4Parser", "MEDIA SCAN COMPLETED: " + path);
-                    }
-                });
+                Utils.scanMediaFilePath(context, outputFilePath);
             }
         } catch (IOException e) {
             sendMessageToUnityObject(unityErrorCallbackName, e.getMessage()+" #6");
