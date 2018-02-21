@@ -101,7 +101,11 @@ public class CaptureSource implements ICaptureSource {
     @Override
     public Frame getFrame() {
         if (isStopped) {
-            commandQueue.clear();
+            // Disabling this due a race condition with stop().
+            // If getFrame() is called after stop(), the Command.EndOfFile command
+            // will be cleared from the queue, and capture won't stop properly.
+            // Ref: https://github.com/INDExOS/media-for-mobile/issues/41
+            // commandQueue.clear();
             return Frame.EOF();
         }
         return currentFrame;
