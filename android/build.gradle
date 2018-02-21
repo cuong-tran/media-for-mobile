@@ -36,6 +36,8 @@ dependencies {
     //compile project(':domain')
     compile "com.bandlab.m4m:domain:$project.version"
     testCompile 'junit:junit:4.12'
+    //    compile files('libs/android-support-v4.jar')
+    compile 'com.android.support:appcompat-v7:25.3.1'
 }
 
 version = android.defaultConfig.versionName

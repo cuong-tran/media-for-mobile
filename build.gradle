@@ -72,3 +72,52 @@ Object getBuildProperty(String varName, String defaultValue = null) {
 
     return defaultValue
 }
+
+task copyJarDomain(type: Copy) {
+    from('domain/build/libs/domain.jar')
+    into('release/')
+}
+
+//task copyAARAndroid(type: Copy) {
+//    from('android/build/outputs/aar/android-release.aar')
+//    into('release/')
+//}
+
+task copyJarAspectjrt(type: Copy) {
+    from('m4m/libs/aspectjrt-1.7.3.jar')
+    into('release/')
+}
+
+task copyJarIsoParser(type: Copy) {
+    from('m4m/libs/isoparser-1.0.2.jar')
+    into('release/')
+}
+
+task copyJarAndroid(type: Copy) {
+    from('android/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'android.jar')
+}
+
+task copyJarEffects(type: Copy) {
+    from('effects/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'effects.jar')
+}
+
+task copyJarM4M(type: Copy) {
+    from('m4m/build/intermediates/bundles/default/classes.jar')
+    into('release/')
+    rename('classes.jar', 'm4m.jar')
+}
+
+task deleteOldJars(type: Delete) << {
+    delete 'release/m4m.jar'
+    delete 'release/domain.jar'
+    delete 'release/effects.jar'
+    delete 'release/android.jar'
+    delete 'release/android-release.aar'
+}
+
+task exportJars() {}
+exportJars.dependsOn(deleteOldJars, copyJarDomain, copyJarEffects, copyJarM4M, copyJarAndroid, copyJarIsoParser, copyJarAspectjrt)

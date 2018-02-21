@@ -22,8 +22,11 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.Handler;
+import android.util.Log;
+
 import org.m4m.IProgressListener;
 import org.m4m.StreamingParameters;
+import org.m4m.android.Utils;
 import org.m4m.android.graphics.EglUtil;
 import org.m4m.android.graphics.FrameBuffer;
 import org.m4m.android.graphics.FullFrameTexture;
@@ -128,6 +131,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
             return;
         }
         synchronized (videoCapture) {
+            Log.e(Utils.className(this), "startCapturing: " + videoPath);
             videoCapture.start(videoPath);
         }
     }
@@ -138,6 +142,7 @@ public class GameRenderer implements GLSurfaceView.Renderer {
         }
         synchronized (videoCapture) {
             if (videoCapture.isStarted()) {
+                Log.e(Utils.className(this), "stopCapturing: ");
                 videoCapture.stop();
             }
         }

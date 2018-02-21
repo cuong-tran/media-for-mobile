@@ -17,6 +17,7 @@
 package org.m4m.android;
 
 import android.opengl.*;
+import android.util.Log;
 import android.view.Surface;
 
 
@@ -173,11 +174,12 @@ class InputSurface {
         boolean failed = false;
         int error;
         while ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
-            //Log.e(TAG, msg + ": EGL error: 0x" + Integer.toHexString(error));
+            Log.e("InputSurface", "checkEglError: " + msg + ": EGL error: 0x" + Integer.toHexString(error));
             failed = true;
         }
         if (failed) {
-            throw new RuntimeException("EGL error encountered.");
+            Log.e("InputSurface", "RuntimeException: EGL error encountered.");
+            //throw new RuntimeException("EGL error encountered.");
         }
     }
 

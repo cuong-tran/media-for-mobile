@@ -16,6 +16,7 @@
 
 package org.m4m.domain.pipeline;
 
+import org.m4m.Log;
 import org.m4m.domain.dsl.CommandProcessorSpy;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -181,6 +182,7 @@ public class CommandProcessorTest extends TestBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.e("CommandProcessorTest","canPauseAndResume");
                 commandProcessor.process();
                 onDone[0] = true;
             }

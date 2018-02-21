@@ -16,8 +16,15 @@
 
 package org.m4m.samples;
 
-import android.hardware.Camera;
+import org.m4m.ILog;
 
+import android.content.Context;
+import android.hardware.Camera;
+import android.os.Environment;
+import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 class CameraUtils {

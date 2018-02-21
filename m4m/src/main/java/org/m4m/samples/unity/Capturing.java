@@ -1,0 +1,245 @@
+package org.m4m.samples.unity;
+
+import org.m4m.IProgressListener;
+import org.m4m.android.Utils;
+import org.m4m.android.graphics.FullFrameTexture;
+
+import android.opengl.GLES20;
+import android.os.Environment;
+import android.util.Log;
+import android.content.Context;
+
+import com.unity3d.player.UnityPlayer;
+
+import java.io.IOException;
+import java.io.File;
+
+public class Capturing
+{
+    private static String unityGameObjectName = "AndroidVideoCapture";
+    private static final String unitySuccessCallbackName = "OnVideoRecordingSuccess";
+    private static final String unityErrorCallbackName = "OnVideoRecordingError";
+
+    private static final String TAG = "Capturing";
+
+    private static FullFrameTexture texture;
+
+    private VideoCapture videoCapture;
+
+    private int videoWidth = 0;
+    private int videoHeight = 0;
+    private int videoFrameRate = 0;
+
+    private long nextCaptureTime = 0;
+    private long startTime = 0;
+
+    private static Capturing instance = null;
+
+    private SharedContext sharedContext = null;
+    private EncodeThread encodeThread = null;
+    private boolean finalizeFrame = false;
+    private boolean isRunning = false;
+
+    private Context context;
+
+    /**
+     * this method is called in Unity
+     * @param name
+     */
+    public static void setUnityObjectName(String name) {
+        unityGameObjectName = name;
+    }
+
+    /**
+     * Send message to Unity's GameObject (named as Plugin.unityGameObjectName)
+     * @param method name of the method in GameObject's script
+     * @param message the actual message
+     */
+    private static void sendMessageToUnityObject(String method, String message){
+        UnityPlayer.UnitySendMessage(unityGameObjectName, method, message);
+    }
+
+    private IProgressListener progressListener = new IProgressListener() {
+        @Override
+        public void onMediaStart() {
+            startTime = System.nanoTime();
+            nextCaptureTime = 0;
+            encodeThread.start();
+            isRunning = true;
+        }
+
+        @Override
+        public void onMediaProgress(float progress) {
+        }
+
+        @Override
+        public void onMediaDone() {
+        }
+
+        @Override
+        public void onMediaPause() {
+        }
+
+        @Override
+        public void onMediaStop() {
+        }
+
+        @Override
+        public void onError(Exception exception) {
+        }
+    };
+
+    private class EncodeThread extends Thread
+    {
+        private static final String TAG = "EncodeThread";
+
+        private SharedContext sharedContext;
+        private boolean isStopped = false;
+        private int textureID;
+        private boolean newFrameIsAvailable = false;
+
+        EncodeThread(SharedContext sharedContext) {
+            super();
+            this.sharedContext = sharedContext;
+        }
+
+        @Override
+        public void run() {
+            while (!isStopped) {
+                if (newFrameIsAvailable) {
+                    synchronized (videoCapture) {
+                        sharedContext.makeCurrent();
+                        videoCapture.beginCaptureFrame();
+                        GLES20.glViewport(0, 0, videoWidth, videoHeight);
+                        texture.draw(textureID);
+                        videoCapture.endCaptureFrame();
+                        newFrameIsAvailable = false;
+                        sharedContext.doneCurrent();
+                    }
+                }
+            }
+            isStopped = false;
+            synchronized (videoCapture) {
+                String[] message = new String[1];
+                boolean success = videoCapture.stop(message);
+                if (success)
+                    sendMessageToUnityObject(unitySuccessCallbackName, message[0]);
+                else
+                    sendMessageToUnityObject(unityErrorCallbackName, message[0]);
+            }
+        }
+
+        public void queryStop() {
+            isStopped = true;
+        }
+
+        public void pushFrame(int textureID) {
+            this.textureID = textureID;
+            newFrameIsAvailable = true;
+        }
+    }
+
+    public void initWithContext(Context context)
+    {
+        checkEglError("Capturing.initWithContextAndSize");
+        videoCapture = new VideoCapture(context, progressListener);
+
+        this.context = context;
+        texture = new FullFrameTexture();
+        sharedContext = new SharedContext();
+        instance = this;
+    }
+
+    public Capturing(Context context)
+    {
+        initWithContext(context);
+    }
+
+    public static Capturing getInstance()
+    {
+        if (instance == null)
+            instance = new Capturing(null);
+        return instance;
+    }
+
+    public void checkEglError(String operation) {
+        int error;
+        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+            Log.e(TAG, "checkEglError: " + operation + ": glError " + error);
+            //throw new RuntimeException(operation + ": glError " + error);
+        }
+    }
+
+    public static String getDirectoryDCIM()
+    {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator;
+    }
+
+    public static String getFileSeparator()
+    {
+        return File.separator;
+    }
+
+    public String getAppDataVideoFilePath(String fileName)
+    {
+        Log.e(TAG, "getAppDataVideoFilePath: context=" + context);
+        if (context != null) {
+            return Utils.getAppDataVideoFilePath(context, fileName);
+        } else {
+            return Utils.getExternalStorageVideoFilePath(fileName);
+        }
+    }
+
+    public void initCapturing(int width, int height, int frameRate, int bitRate)
+    {
+        Log.d(TAG, "--- initCapturing: " + width + "x" + height + ", " + frameRate + ", " + bitRate);
+        videoFrameRate = frameRate;
+        VideoCapture.init(width, height, frameRate, bitRate);
+        videoWidth = width;
+        videoHeight = height;
+
+        encodeThread = new EncodeThread(sharedContext);
+    }
+
+    public void startCapturing(final String videoPath, final boolean captureAudio)
+    {
+        if (videoCapture == null) {
+            return;
+        }
+
+        (new Thread() {
+            public void run() {
+                Log.d(TAG, "--- startCapturing");
+                synchronized (videoCapture) {
+                    try {
+                        videoCapture.start(videoPath, captureAudio);
+                    } catch (IOException e) {
+                        Log.e(TAG, "--- startCapturing error");
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void captureFrame(int textureID)
+    {
+        encodeThread.pushFrame(textureID);
+    }
+
+    public void stopCapturing()
+    {
+        Log.d(TAG, "--- stopCapturing");
+        isRunning = false;
+
+        if (finalizeFrame) {
+            finalizeFrame = false;
+        }
+        encodeThread.queryStop();
+    }
+
+    public boolean isRunning()
+    {
+        return isRunning;
+    }
+}

@@ -50,10 +50,13 @@ public class CommandProcessor implements ICommandProcessor {
         for (OutputInputPair pair : pairs) {
             pair.output.fillCommandQueues();
             pair.input.fillCommandQueues();
+            //Log.e("CommandProcessor.process1", pair.input + " " + pair.output);
         }
 
         while (!stopped) {
+            //Log.e("CommandProcessor.process","2");
             for (OutputInputPair pair : pairs) {
+                //Log.e("CommandProcessor.process2", pair.input + " " + pair.output);
                 processCommandPairs(pair);
             }
         }
