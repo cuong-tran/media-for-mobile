@@ -42,13 +42,4 @@ public class VideoFormatTest extends TestBase {
         assertEquals(1, videoFormat.getVideoBitRateInKBytes());
     }
 
-    @Test
-    public void setTargetVideoBitRateInKBytes_FixesTooBigBitrate() {
-        VideoFormatFake videoFormat = new VideoFormatFake();
-        videoFormat.setVideoFrameSize(100, 100);
-
-        videoFormat.setVideoBitRateInKBytes(1000);
-
-        assertEquals((int) (100 * 100 * 30 * 2 * 0.00007), videoFormat.getVideoBitRateInKBytes());
-    }
 }
