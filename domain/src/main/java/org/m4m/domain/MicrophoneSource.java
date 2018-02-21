@@ -25,6 +25,16 @@ public class MicrophoneSource  implements  IMicrophoneSource{
     public void configure(int sampleRate, int channels) { }
 
     @Override
+    public void setBufferSizeInSamples(int bufferSizeInSamples) {
+
+    }
+
+    @Override
+    public void captureAudioChunk(float[] samples, int length) {
+
+    }
+
+    @Override
     public void pull(Frame frame) {
         if (!isStopped()) {
 

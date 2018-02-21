@@ -25,11 +25,10 @@ import org.m4m.domain.Frame;
 import org.m4m.domain.MediaFormat;
 import org.m4m.domain.MediaFormatType;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class MicrophoneSource extends org.m4m.domain.MicrophoneSource {
-
+    private short[] shortBuffer;
     private static final long sampleSize = 2;
     private AudioRecord recorder;
 
@@ -69,22 +68,20 @@ public class MicrophoneSource extends org.m4m.domain.MicrophoneSource {
             bufferSize = frame.getByteBuffer().capacity();
         }
 
-        int actualRead;
+        int actualBytesRead;
         if (frame.getByteBuffer().isDirect()) {
-            actualRead = recorder.read(frame.getByteBuffer(), bufferSize);
+            actualBytesRead = recorder.read(frame.getByteBuffer(), bufferSize);
         } else {
-            short [] buffer = new short[bufferSize];
-            actualRead = recorder.read(buffer, 0, bufferSize);
-            byte[] bytes = new byte[buffer.length * 2];
-            ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(buffer);
-            ByteBuffer bb = ByteBuffer.allocate(minBufferSize).put(bytes);
-
-            frame.setByteBuffer(bb);
+            if (shortBuffer == null || shortBuffer.length != bufferSize / 2){
+                shortBuffer = new short[bufferSize / 2];
+            }
+            actualBytesRead = recorder.read(shortBuffer, 0, shortBuffer.length) * 2;
+            frame.getByteBuffer().order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().put(shortBuffer);
         }
 
-        frame.setLength(actualRead);
+        frame.setLength(actualBytesRead);
 
-        long presentationTimeNs = (actualRead / (sampleRate * sampleSize * recordChannels)) / 1000000000;
+        long presentationTimeNs = (long)((actualBytesRead / (float)(sampleRate * sampleSize * recordChannels)) * 1000000000);
 
         long sampleTimeMicrosec = (System.nanoTime() - startTimeNs + presentationTimeNs) / 1000;
         frame.setSampleTime(sampleTimeMicrosec);
@@ -100,6 +97,7 @@ public class MicrophoneSource extends org.m4m.domain.MicrophoneSource {
             recorder.release();
         }
         recorder = null;
+        shortBuffer = null;
     }
 
     @Override
@@ -138,6 +136,7 @@ public class MicrophoneSource extends org.m4m.domain.MicrophoneSource {
         return new AudioFormatAndroid("audio/aac", sampleRate, recordChannels);
     }
 
+    @Override
     public synchronized void configure(int sampleRate, int channels) {
         this.sampleRate = sampleRate;
         recordChannels = channels;

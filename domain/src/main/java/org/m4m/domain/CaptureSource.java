@@ -32,7 +32,7 @@ public class CaptureSource implements ICaptureSource {
     public void setSurfaceSize(int width, int height) {}
 
     @Override
-    public void beginCaptureFrame() {}
+    public boolean beginCaptureFrame() { return true; }
 
     @Override
     public void endCaptureFrame() {

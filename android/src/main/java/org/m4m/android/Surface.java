@@ -24,8 +24,8 @@ import org.m4m.domain.Resolution;
 import org.m4m.domain.graphics.IEglUtil;
 
 public class Surface implements ISurface {
-    private final OutputSurface outputSurface;
-    private final InputSurface inputSurface;
+    private OutputSurface outputSurface;
+    private InputSurface inputSurface;
     private int width;
     private int height;
 
@@ -109,5 +109,9 @@ public class Surface implements ISurface {
 
     @Override
     public void release(){
+        inputSurface.release();
+        outputSurface.release();
+        inputSurface = null;
+        outputSurface = null;
     }
 }

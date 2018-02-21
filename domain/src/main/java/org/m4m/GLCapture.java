@@ -26,8 +26,8 @@ import org.m4m.domain.IMicrophoneSource;
  */
 
 public class GLCapture extends CapturePipeline {
-    private ICaptureSource videoSource;
-    private IMicrophoneSource audioSource;
+    private ICaptureSource videoSource = null;
+    private IMicrophoneSource audioSource = null;
     private boolean frameInProgress;
 
     public GLCapture(IAndroidMediaObjectFactory factory, IProgressListener progressListener) {
@@ -53,6 +53,12 @@ public class GLCapture extends CapturePipeline {
         super.setTargetAudioFormat(mediaFormat);
         audioSource = androidMediaObjectFactory.createMicrophoneSource();
         audioSource.configure(mediaFormat.getAudioSampleRateInHz(), mediaFormat.getAudioChannelCount());
+    }
+
+    public void setBufferSizeInSamples(int bufferSizeInSamples){
+        if (audioSource != null) {
+            audioSource.setBufferSizeInSamples(bufferSizeInSamples);
+        }
     }
 
     /**
@@ -86,14 +92,14 @@ public class GLCapture extends CapturePipeline {
     /**
      * Switches the current OpenGL context to capturing context
      */
-    public void beginCaptureFrame() {
+    public boolean beginCaptureFrame() {
         if (frameInProgress) {
-            return;
+            return false;
         }
 
         frameInProgress = true;
 
-        videoSource.beginCaptureFrame();
+        return videoSource.beginCaptureFrame();
     }
 
     /**
@@ -107,5 +113,11 @@ public class GLCapture extends CapturePipeline {
         videoSource.endCaptureFrame();
 
         frameInProgress = false;
+    }
+
+    public void captureAudioChunk(float[] samples, int length){
+        if (audioSource != null) {
+            audioSource.captureAudioChunk(samples, length);
+        }
     }
 }

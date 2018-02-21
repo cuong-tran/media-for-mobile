@@ -18,4 +18,6 @@ package org.m4m.domain;
 
 public interface IMicrophoneSource extends IOutput {
     void configure(int sampleRate, int channels);
+    void setBufferSizeInSamples(int bufferSizeInSamples);
+    void captureAudioChunk(float samples[], int length);
 }

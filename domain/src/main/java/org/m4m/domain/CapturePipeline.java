@@ -218,6 +218,9 @@ public abstract class CapturePipeline {
             return;
         }
         try {
+            // If sink's onStopListener is not executed, then command processor never ends. So I stop it here.
+            pipeline.stopCommandProcessor();
+
             //!!!!!DANGER!!!!
             //ask someone for help before removing that stop call, i have to revert it 3 times already
             pipeline.stop();

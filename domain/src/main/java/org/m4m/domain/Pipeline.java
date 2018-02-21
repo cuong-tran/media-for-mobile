@@ -151,4 +151,8 @@ public class Pipeline {
             ((Closeable) node).close();
         }
     }
+
+    public void stopCommandProcessor(){
+        commandProcessor.stop();
+    }
 }

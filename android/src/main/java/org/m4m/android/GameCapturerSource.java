@@ -57,9 +57,9 @@ public class GameCapturerSource extends CaptureSource {
     }
 
     @Override
-    public void beginCaptureFrame() {
+    public boolean beginCaptureFrame() {
         if (renderingSurface == null) {
-            return;
+            return false;
         }
 
         contextSwitcher.saveEglState();
@@ -67,6 +67,8 @@ public class GameCapturerSource extends CaptureSource {
         renderingSurface.makeCurrent();
         renderingSurface.setProjectionMatrix(contextSwitcher.getProjectionMatrix());
         renderingSurface.setViewport();
+
+        return true;
     }
 
     @Override
