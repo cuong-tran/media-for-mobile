@@ -1,6 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
+group 'com.bandlab.m4m'
+version '1.0.4'
+
+apply from: '../artifactory_java.gradle'
+
 dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
