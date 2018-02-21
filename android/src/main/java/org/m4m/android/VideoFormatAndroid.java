@@ -30,6 +30,18 @@ public class VideoFormatAndroid extends VideoFormat {
     }
 
     public VideoFormatAndroid(String mimeType, int width, int height) {
+        // TODO: Disable 1280x720 limitation
+        /*
+        if (width > 1280 || height > 1280) {
+            if (width > height) {
+                width = 1280;
+                height = 720;
+            } else {
+                width = 720;
+                height = 1280;
+            }
+        }
+        */
         this.mediaFormat = android.media.MediaFormat.createVideoFormat(mimeType, width, height);
         setVideoFrameSize(width, height);
         setVideoCodec(mimeType);
