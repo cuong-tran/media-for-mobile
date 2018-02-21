@@ -91,9 +91,12 @@ public abstract class VideoFormat extends MediaFormat {
      * @param bitRate Video bit rate in KBytes.
      */
     public void setVideoBitRateInKBytes(int bitRate) {
+        // TODO: Disable bitrate limitation
+        /*
         if (width * height * 30 * 2 * 0.00007 < bitRate) {
             bitRate = (int) (width * height * 30 * 2 * 0.00007);
         }
+        */
         setInteger(KEY_BIT_RATE, bitRate * 1024);
     }
 

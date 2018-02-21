@@ -42,6 +42,8 @@ public class VideoFormatTest extends TestBase {
         assertEquals(1, videoFormat.getVideoBitRateInKBytes());
     }
 
+    // TODO: Disable bitrate limitation
+    /*
     @Test
     public void setTargetVideoBitRateInKBytes_FixesTooBigBitrate() {
         VideoFormatFake videoFormat = new VideoFormatFake();
@@ -51,4 +53,5 @@ public class VideoFormatTest extends TestBase {
 
         assertEquals((int) (100 * 100 * 30 * 2 * 0.00007), videoFormat.getVideoBitRateInKBytes());
     }
+    */
 }
