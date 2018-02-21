@@ -21,17 +21,17 @@ allprojects {
         jcenter()
         maven {
             url getBuildProperty("ARTIFACTORY_CONTEXT_URL") + "/" + getBuildProperty("ARTIFACTORY_REPO_KEY")
-            credentials {
-                username getBuildProperty("ARTIFACTORY_USERNAME")
-                password getBuildProperty("ARTIFACTORY_PASSWORD")
-            }
+            //credentials {
+            //    username getBuildProperty("ARTIFACTORY_USERNAME")
+            //    password getBuildProperty("ARTIFACTORY_PASSWORD")
+            //}
         }
         maven {
             url getBuildProperty("ARTIFACTORY_CONTEXT_URL") + "/" + getBuildProperty("ARTIFACTORY_SNAPSHOTS_REPO_KEY")
-            credentials {
-                username getBuildProperty("ARTIFACTORY_USERNAME")
-                password getBuildProperty("ARTIFACTORY_PASSWORD")
-            }
+            //credentials {
+            //    username getBuildProperty("ARTIFACTORY_USERNAME")
+            //    password getBuildProperty("ARTIFACTORY_PASSWORD")
+            //}
         }
     }
     afterEvaluate { project ->
