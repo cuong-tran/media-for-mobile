@@ -91,6 +91,7 @@ public class GLCapture extends CapturePipeline {
 
     /**
      * Switches the current OpenGL context to capturing context
+     * @return boolean indicating if it actually started or not
      */
     public boolean beginCaptureFrame() {
         if (frameInProgress) {

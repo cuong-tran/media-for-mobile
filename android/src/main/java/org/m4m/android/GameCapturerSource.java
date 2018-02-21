@@ -56,6 +56,9 @@ public class GameCapturerSource extends CaptureSource {
         contextSwitcher.restoreEglState();
     }
 
+    /**
+     * @return boolean indicating if it actually started or not
+     */
     @Override
     public boolean beginCaptureFrame() {
         if (renderingSurface == null) {

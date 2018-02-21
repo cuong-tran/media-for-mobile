@@ -27,6 +27,7 @@ public interface ICaptureSource extends IPluginOutput {
 
     /**
      * Will capture all draw function happened in-between
+     * @return boolean indicating if it actually started or not
      */
     public boolean beginCaptureFrame();
 

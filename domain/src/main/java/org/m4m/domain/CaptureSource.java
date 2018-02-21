@@ -31,6 +31,9 @@ public class CaptureSource implements ICaptureSource {
     @Override
     public void setSurfaceSize(int width, int height) {}
 
+    /**
+     * @return boolean indicating if it actually started or not
+     */
     @Override
     public boolean beginCaptureFrame() { return true; }
 
