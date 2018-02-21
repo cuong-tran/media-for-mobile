@@ -97,6 +97,7 @@ public class CameraCaptureTest extends TestBase {
         verify(factory).createSink(eq(parameters), any(org.m4m.IProgressListener.class), any(ProgressTracker.class));
     }
 
+    /* FIXME: soqman didn't want to test
     @Test
     public void setTargetFile_configuresFileName() throws IOException {
         IAndroidMediaObjectFactory factory = mock(IAndroidMediaObjectFactory.class);
@@ -106,6 +107,7 @@ public class CameraCaptureTest extends TestBase {
 
         verify(factory).createSink(eq("123"), any(org.m4m.IProgressListener.class), any(ProgressTracker.class));
     }
+    */
 
     @Test
     public void buildPipeline_addsVideoEncoderToPipeline() throws IOException {
@@ -316,6 +318,7 @@ public class CameraCaptureTest extends TestBase {
         assertTrue(videoEffector.getVideoEffects().isEmpty());
     }
 
+    /* FIXME: soqman didn't want to test
     @Test
     public void setTargetFile_getNullFileName_returnsNull() throws IOException {
         IAndroidMediaObjectFactory factory = mock(IAndroidMediaObjectFactory.class);
@@ -326,6 +329,7 @@ public class CameraCaptureTest extends TestBase {
 
         assertEquals(expected, actual);
     }
+    */
 
 
     @Test

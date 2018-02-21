@@ -40,3 +40,16 @@ dependencies {
 
 version = android.defaultConfig.versionName
 group = "org.m4m"
+
+task deleteJar(type: Delete) {
+    delete 'build/libs/android.jar'
+}
+
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/default/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', 'android.jar')
+}
+
+createJar.dependsOn(deleteJar, build)
