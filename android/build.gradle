@@ -42,7 +42,7 @@ task deleteJar(type: Delete) {
 }
 
 task createJar(type: Copy) {
-    from('build/intermediates/bundles/default/')
+    from('build/intermediates/bundles/release/')
     into('build/libs/')
     include('classes.jar')
     rename('classes.jar', 'android.jar')

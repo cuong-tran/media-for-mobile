@@ -1,4 +1,4 @@
-package com.sancalpa.capturer;
+package org.m4m.capturer;
 
 import org.junit.Test;
 

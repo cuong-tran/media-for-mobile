@@ -15,3 +15,16 @@ targetCompatibility = JavaVersion.VERSION_1_7
 javadoc {
     exclude '**/org/m4m/domain/**'
 }
+
+task deleteJar(type: Delete) {
+    delete 'build/libs/domain.jar'
+}
+
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename('classes.jar', 'domain.jar')
+}
+
+createJar.dependsOn(deleteJar, build)

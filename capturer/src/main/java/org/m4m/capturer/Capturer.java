@@ -1,8 +1,9 @@
-package com.sancalpa.capturer;
+package org.m4m.capturer;
 
 import android.content.Context;
 import android.opengl.GLES20;
 import android.os.Environment;
+import android.util.DebugUtils;
 import android.util.Log;
 
 import org.m4m.IProgressListener;
@@ -113,13 +114,34 @@ public class Capturer
     public Capturer(Context context, int width, int height)
     {
         videoCapture = new VideoCapture(context, progressListener);
+        if (videoCapture == null)
+            Log.e(TAG, "Unable to create Video Capture");
+        else
+            Log.e(TAG, "Video Capture created");
 
         this.width = width;
         this.height = height;
 
-        texture = new FullFrameTexture();
+        try {
+            texture = new FullFrameTexture();
+        } catch (Exception e){
+            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+        if (texture == null)
+            Log.e(TAG, "Unable to create Full Frame Texture");
+        else
+            Log.e(TAG, "Full Frame Texture created");
+
         sharedContext = new SharedContext();
+        if (sharedContext == null)
+            Log.e(TAG, "Unable to create Shared Context");
+        else
+            Log.e(TAG, "Shared Context created");
+
         instance = this;
+        if (instance == null)
+            Log.e(TAG, "Unable to assign global instance");
     }
 
     public static Capturer getInstance()
